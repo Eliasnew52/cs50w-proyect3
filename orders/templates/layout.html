@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    {% load static %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clifford: '#da373d',
+                        green: '#32CD32'
+                    }
+                }
+            },
+            variants:{
+                extends:['group-focus']
+            }
+
+
+
+        }
+    </script>
+</head>
+<style>
+    @media (max-width: 576px) {
+        .content {
+            padding-top: 51px;
+        }
+    }
+    
+    @media (min-width: 577px) {
+        .pt-scroll {
+            padding-top: 51px;
+        }
+        .nav-sticky {
+            position: fixed!important;
+            min-width: 100%;
+            top: 0;
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+            z-index: 1;
+        }
+    }
+    /* HAMBURGER MENU */
+    
+    .hamburger {
+        cursor: pointer;
+        width: 48px;
+        height: 48px;
+        transition: all 0.25s;
+    }
+    
+    .hamburger__top-bun,
+    .hamburger__bottom-bun {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 2px;
+        background: #000;
+        transform: rotate(0);
+        transition: all 0.5s;
+    }
+    
+    .hamburger:hover [class*="-bun"] {
+        background: #333;
+    }
+    
+    .hamburger__top-bun {
+        transform: translateY(-5px);
+    }
+    
+    .hamburger__bottom-bun {
+        transform: translateY(3px);
+    }
+    
+    .open {
+        transform: rotate(90deg);
+        transform: translateY(-1px);
+    }
+    
+    .open .hamburger__top-bun {
+        transform: rotate(45deg) translateY(0px);
+    }
+    
+    .open .hamburger__bottom-bun {
+        transform: rotate(-45deg) translateY(0px);
+    }
+</style>
+
+<style type="text/tailwindcss">
+    @layer utilities { .content-auto { content-visibility: auto; } }
+</style>
+
+<body>
+    <header id="top" class="w-full flex flex-col fixed top sm:relative bg-white pin-t pin-r pin-l">
+
+        <nav id="site-menu" class="flex flex-col sm:flex-row w-full justify-between items-center px-4 sm:px-6 py-1 bg-white shadow sm:shadow-none border-t-4 border-red-900">
+            <div class="w-full sm:w-auto self-start sm:self-center flex flex-row sm:flex-none flex-no-wrap justify-between items-center">
+                <a href="/" aria-label="logo" class="flex space-x-2 items-center">
+                    <img src="{% static 'images/pizza.png' %}" class="w-12" alt="logo" width="133" height="122">
+                    <span class="text-2xl font-bold text-yellow-900">A Normal Pizza Shop</span>
+                </a>
+                <button id="menuBtn" class="hamburger block sm:hidden focus:outline-none" type="button" onclick="navToggle();">
+              <span class="hamburger__top-bun"></span><span class="hamburger__bottom-bun"></span>
+            </button>
+            </div>
+            <div id="menu" class="w-full sm:w-auto self-end sm:self-center sm:flex flex-col sm:flex-row items-center h-full py-1 pb-4 sm:py-0 sm:pb-0 hidden">
+                <div class="text-gray-600 lg:pr-4">
+                    <ul class="space-y-6 tracking-wide font-medium text-sm md:flex md:space-y-0">
+                        {% if request.user.is_authenticated %}
+                        
+                            <li><a href="/" class="block md:px-4 transition hover:text-yellow-700"><span>Menu</span></a></li>
+                            <li><a href="/notices" class="block  md:px-4 transition hover:text-yellow-700"><span>Noticias</span></a></li>
+                            <li><a href="/profile" class="block md:px-4 transition hover:text-yellow-700"><span>Perfil</span></a></li>
+                                {% if current_order_products  %}
+                                    <li><a class="block md:px-4 transition hover:text-yellow-700" href="{% url 'orders:ordersummary' %}">Carrito</a></li>
+                                {% endif %}
+                                {% if order %}
+                                <li>
+                              <a class="block md:px-4 transition hover:text-yellow-700" href="{% url 'orders:ordersummary' %}">Carrito</a>
+                                </li>
+                              {% endif %}
+                        
+                              {% if current_order_products != NONE %}
+                             
+                   
+                                <li><a class="block md:px-4 transition hover:text-yellow-700" href="{% url 'orders:ordersummary' %}"><img src="/static/img/carrito-de-compras.png" width="25px" height="20px" >{{item_count}}</a></li>                   
+                             
+                             {% endif %}
+                        {% if request.user.is_superuser %}
+                        <li><a class="block md:px-4 transition hover:text-yellow-700" href="/admin">Admin</a></li>
+                        <li><a class="block md:px-4 transition hover:text-yellow-700" href="/allorders">All Orders</a></li>
+                        {% endif %}
+                        {%endif%}
+                    </ul>
+                </div>
+
+                <div class="w-full space-y-2 border-yellow-200 lg:space-y-0 md:w-max lg:border-l">
+                    {% if not request.user.is_authenticated %}
+                        <button type="button" class="w-full py-3 px-6 text-center rounded-full transition active:bg-yellow-200 focus:bg-yellow-100 sm:w-max">
+                            <span class="block text-yellow-800 font-semibold text-sm">
+                            <a href="/register">Registrate</a>
+                            </span>
+                        </button>
+                        <button type="button" class="w-full py-3 px-6 text-center rounded-full transition bg-yellow-300 hover:bg-yellow-100 active:bg-yellow-400 focus:bg-yellow-300 sm:w-max">
+                            <span class="block text-yellow-900 font-semibold text-sm">
+                            <a href="/login">Iniciar Sesion</a>
+                            </span>
+                        </button>
+                    {% else %}
+                    
+
+                        <button type="button" class="w-full py-3 px-6 text-center rounded-full transition bg-yellow-300 hover:bg-yellow-100 active:bg-yellow-400 focus:bg-yellow-300 sm:w-max">
+                            <span class="block text-yellow-900 font-semibold text-sm">
+                                <a href="/logout">Logout</a>
+                            </span>
+                        </button>
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    {% block template %}{%endblock%}
+
+
+    <footer class="text-gray-600 body-font content-end">
+
+        <div class="bg-gray-100">
+            <div class="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+
+                <span class="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
+            <a class="text-gray-500">
+              <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+              </svg>
+            </a>
+            <a class="ml-3 text-gray-500">
+              <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+              </svg>
+            </a>
+            <a class="ml-3 text-gray-500">
+              <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+              </svg>
+            </a>
+            <a class="ml-3 text-gray-500">
+              <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
+                <path stroke="none" d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+                <circle cx="4" cy="4" r="2" stroke="none"></circle>
+              </svg>
+            </a>
+          </span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        var nav = document.getElementById('site-menu');
+        var header = document.getElementById('top');
+
+        window.addEventListener('scroll', function() {
+            if (window.scrollY >= 400) { // adjust this value based on site structure and header image height
+                nav.classList.add('nav-sticky');
+                header.classList.add('pt-scroll');
+            } else {
+                nav.classList.remove('nav-sticky');
+                header.classList.remove('pt-scroll');
+            }
+        });
+
+        function navToggle() {
+            var btn = document.getElementById('menuBtn');
+            var nav = document.getElementById('menu');
+
+            btn.classList.toggle('open');
+            nav.classList.toggle('flex');
+            nav.classList.toggle('hidden');
+        }
+    </script>
+</body>
+
+</html>

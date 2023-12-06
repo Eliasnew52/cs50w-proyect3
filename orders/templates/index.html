@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{%block template%}
+
+<style>
+  .toast{
+    animation: toast .3s forwards;
+  }
+  @keyframes toast{
+    form{
+      opacity: 0;
+    }
+    to{
+      opacity: 1;
+    }
+  }
+</style>
+
+<div class="absolute left-0 top-10 m-5">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="flex items-center bg-red-700 border-l-4 border-red-800 py-2 px-3 shadow-md mb-2">
+        <!-- icons -->
+        <div class="text-green-500 rounded-full bg-white mr-3">
+          <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-check" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
+          </svg>
+        </div>
+        <!-- message -->
+        <div class="text-white max-w-xs ">
+          {{message}}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+  </div>
+
+
+  <div class="container px-5 py-20 mx-auto flex flex-wrap items-center">
+    
+    <table  class="shadow-2xl border-2 border-cyan-200 w-full md:table-fixed content-center">
+      <thead class="text-white">
+
+        <tr>
+
+          <th scope="col" class="py-3 bg-cyan-800">Item</th>
+          <th scope="col" class="py-3 bg-cyan-800">Size</th>
+          <th scope="col" class="py-3 bg-cyan-800">Price</th>
+          <th scope="col" class="py-3 bg-cyan-800">option</th>
+          <th scope="col" class="py-3 bg-cyan-800 text-cyan-800">.</th>
+
+      
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {% for item in menu_item %}
+
+       {% csrf_token %}
+
+        {% ifchanged item.category %}
+
+
+        <tr id="{{item.category}}">
+          
+          <th scope="col" colspan="5" class="py-3 bg-cyan-800 py-4">
+            <h2 class="text-white"> {{ item.category }} </h2>
+          </th>
+
+        </tr>
+        {% endifchanged %}
+
+        <tr>
+
+          <td class="py-3 px-6">{{item.name}}</td>
+          <td class="py-3 px-6">{{item.sizes}}</td>
+          <td class="py-3 px-6">{{item.price}}</td>
+
+          {% if item.category == "Pizza" and "Topping" in item.name %}
+
+
+          <td class="py-3 px-6">
+            <a class="bg-cyan-700 border border-yellow-800 shadow p-2 rounded text-white flex items-center focus:outline-none focus:shadow-outline" href="{% url 'orders:customize_order' item.name %}" >personalizar</a></td>
+
+        {% elif item.category == "Subs" %}
+        <td class="py-3 px-6"><a href="{% url 'orders:customize_order' item.name %}" class="bg-cyan-700 border border-yellow-800 shadow p-2 rounded text-white flex items-center focus:outline-none focus:shadow-outline">personalizar</a></td>
+      {% else %}
+        <form class="" action="#" method="post">
+                {% csrf_token %}
+
+        <td>
+          <label for="qauntity">Cantidad:</label>
+          <input name="quantity" id="quantity" type="number" value=1 min=1 max=30 class="h-6 w-13">
+          <td>
+            <button type="submit" class="bg-cyan-700 border border-cyan-800 shadow p-2 rounded text-white flex items-center focus:outline-none focus:shadow-outline">añadir</button></td>
+
+          </td>          
+        </form>
+      {%endif%}
+
+        </tr>
+        {% endfor %}
+
+      </tbody>
+
+    </table>
+
+    <br>
+  </div>
+  
+    
+{%endblock%}
