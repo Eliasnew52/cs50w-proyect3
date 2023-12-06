@@ -60,6 +60,36 @@ def login_view(request):
 
     if user is not None:
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return redirect('/')
     else:
         return render(request, "login.html", {"message": "Datos invalidos."})
+    
+# USER LOGOUT
+def logout_view(request):
+
+    logout(request)
+    return render(request, "login.html",{"message": "Has Cerrado Sesion"})
+
+
+@login_required()
+def add_to_cart(request, **kwargs):
+    user_profile = get_object_or_404(Profile, user=request.user)
+
+    menu_item = Menu_Item.objects.filter(id=kwargs.get('item_id', "")).first()#ID Obtenido del Form
+
+    quantity = int(request.POST['quantity'])
+
+
+    for x in range(quantity):
+        order_item = OrderItem.objects.create(menu_item=menu_item)
+
+        user_order, status = Order.objects.get_or_create(owner=user_profile,is_ordered=False)
+
+        user_order.ordered_items.add(order_item)
+
+    if status:
+        user_order.save()
+
+    messages.info(request, f" {quantity} {menu_item.sizes} {menu_item.name} Add")
+
+    return redirect('/')
