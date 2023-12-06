@@ -11,6 +11,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
 
     <link rel="stylesheet" type="text/css" href="{% static 'login.css' %}">
+    
     <script>
         tailwind.config = {
             theme: {
@@ -121,18 +122,18 @@
                             <li><a href="/notices" class="block  md:px-4 transition hover:text-yellow-700"><span>Noticias</span></a></li>
                             <li><a href="/profile" class="block md:px-4 transition hover:text-yellow-700"><span>Perfil</span></a></li>
                                 {% if current_order_products  %}
-                                    <li><a class="block md:px-4 transition hover:text-yellow-700" href="{% url 'orders:ordersummary' %}">Carrito</a></li>
+                                    <li><a class="block md:px-4 transition hover:text-yellow-700" href="#">Carrito</a></li>
                                 {% endif %}
                                 {% if order %}
                                 <li>
-                              <a class="block md:px-4 transition hover:text-yellow-700" href="{% url 'orders:ordersummary' %}">Carrito</a>
+                              <a class="block md:px-4 transition hover:text-yellow-700" href="#">Carrito</a>
                                 </li>
                               {% endif %}
                         
                               {% if current_order_products != NONE %}
                              
                    
-                                <li><a class="block md:px-4 transition hover:text-yellow-700" href="{% url 'orders:ordersummary' %}"><img src="/static/img/carrito-de-compras.png" width="25px" height="20px" >{{item_count}}</a></li>                   
+                                <li><a class="block md:px-4 transition hover:text-yellow-700" href="{% url 'ordersummary' %}"><img src="{% static 'images/trolley.png' %}" width="25px" height="20px" >{{item_count}}</a></li>                   
                              
                              {% endif %}
                         {% if request.user.is_superuser %}

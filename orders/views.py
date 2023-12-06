@@ -32,14 +32,14 @@ def index(request):
     if Orders.exists():
         user_order = Orders[0]
         user_order_items = user_order.ordered_items.all()
-        current_order_products = [menu_item.menu_item for menu_item in user_order_items]
+        Cart = [menu_item.menu_item for menu_item in user_order_items]
 
         #toma el numero de items en el carrito
         item_count = user_order.ordered_items.count()
 
     context ={
 
-        'cart': Cart,
+        'current_order_products': Cart,
         'item_count': item_count,
         "user": request.user,
         "menu_item": Menu.order_by('-category')
@@ -71,6 +71,7 @@ def logout_view(request):
     return render(request, "login.html",{"message": "Has Cerrado Sesion"})
 
 
+# CART ITEM ADDITION
 @login_required()
 def add_to_cart(request, **kwargs):
     user_profile = get_object_or_404(Profile, user=request.user)
@@ -89,7 +90,31 @@ def add_to_cart(request, **kwargs):
 
     if status:
         user_order.save()
+        print("Item Saved")
 
-    messages.info(request, f" {quantity} {menu_item.sizes} {menu_item.name} Add")
+    messages.info(request, f" {quantity} {menu_item.sizes} {menu_item.name} Added")
 
     return redirect('/')
+
+#CART CONTENT CHECK
+
+@login_required()
+def get_user_pending_order(request):
+    user_profile = get_object_or_404(Profile, user=request.user)
+    order = Order.objects.filter(owner=user_profile, is_ordered=False)
+    if order.exists():
+        return order[0]
+    return 0
+
+
+@login_required()
+def order_details(request, **kwargs):
+
+    existing_order = get_user_pending_order(request)
+    user_profile = get_object_or_404(Profile, user=request.user)
+    order = Order.objects.filter(owner=user_profile, is_ordered=False)
+
+    context = {
+        'order': existing_order,
+    }
+    return render(request, 'cart.html', context)
