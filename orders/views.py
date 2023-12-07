@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib import messages
+from .forms import UserRegistrationForm
 
 
 #Models Importation
@@ -16,7 +17,7 @@ Extras, Order, OrderItem,  User, News, )
 import datetime
 
 
-@login_required()
+
 def index(request):
 
     if not request.user.is_authenticated:
@@ -69,6 +70,19 @@ def logout_view(request):
 
     logout(request)
     return render(request, "login.html",{"message": "Has Cerrado Sesion"})
+
+
+#USER REGISTRATION (Im Using the Default Django User Model)
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = UserRegistrationForm()
+
+    return render(request, 'register.html', {'form': form})
 
 
 # CART ITEM ADDITION
