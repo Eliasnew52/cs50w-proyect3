@@ -125,3 +125,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'orders/static'),  # Add the path to your static files
 ]
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

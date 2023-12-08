@@ -76,10 +76,10 @@
 
 
           <td class="py-3 px-6">
-            <a class="bg-cyan-700 border border-yellow-800 shadow p-2 rounded text-white flex items-center focus:outline-none focus:shadow-outline" href="{% url 'orders:customize_order' item.name %}" >personalizar</a></td>
+            <a class="bg-cyan-700 border border-yellow-800 shadow p-2 rounded text-white flex items-center focus:outline-none focus:shadow-outline" href="{% url 'customize_order' item.name %}" >Personalizar</a></td>
 
         {% elif item.category == "Subs" %}
-        <td class="py-3 px-6"><a href="{% url 'orders:customize_order' item.name %}" class="bg-cyan-700 border border-yellow-800 shadow p-2 rounded text-white flex items-center focus:outline-none focus:shadow-outline">personalizar</a></td>
+        <td class="py-3 px-6"><a href="{% url 'customize_order' item.name %}" class="bg-cyan-700 border border-yellow-800 shadow p-2 rounded text-white flex items-center focus:outline-none focus:shadow-outline">Personalizar</a></td>
       {% else %}
         <form class="" action="{% url 'add_to_cart' item.id %}" method="post">
                 {% csrf_token %}

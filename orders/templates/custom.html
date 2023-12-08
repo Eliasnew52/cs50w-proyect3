@@ -1,0 +1,188 @@
+{% extends "layout.html" %}
+
+{% block title %} Customize Order {% endblock %}
+{% block template %}
+{% load static %}
+
+
+<div class="my-menu-flex-container">
+
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-info" role="alert">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <table class="table-dark table-responsive-sm table-sm text-center" style="margin-top:5%; width:95%; height:90%">
+    <thead>
+
+      <tr>
+        <th colspan="3">
+          <h5>Enter {%if ordered_item.category == "Pizza"%} Toppings {%elif ordered_item.category == "Subs"%} Extras {%endif%} for
+            {{ordered_item.name}} </h5>
+        </th>
+      </tr>
+
+
+    </thead>
+    <tbody>
+
+      {% if ordered_item.category == "Subs" %}
+
+      <tr>
+
+        <td>
+
+          <form class="" action="{% url 'customize_order' food=ordered_item.name %}" method="post">
+            {% csrf_token %}
+            <label for="quantity">Cantidad:</label>
+            <input name="quantity" id="quantity" type="number" value=1 min=1 max=30>
+            {% if ordered_item.name == "Steak + Cheese Sub" %}
+            {% for extra  in extras %}
+
+
+
+            <div class="form-check">
+
+              <input class="form-check-input" type="checkbox" min="1" name="sub_extras" value="{{extra.name}}" id="{{extra.name}}">
+              <label class="form-check-label" for="{{topping.name}}">
+                {{extra.name}} {{extra.price}}
+              </label>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if ordered_item.name != "Steak + Cheese Sub" %}
+            {% for extra  in extra_cheese %}
+
+            <div class="form-check">
+
+              <input class="form-check-input" type="checkbox" min="1" name="sub_extras" value="{{extra.name}}" id="{{extra.name}}">
+              <label class="form-check-label" for="{{topping.name}}">
+                {{extra.name}} {{extra.price}}
+              </label>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" type="submit">Submit</button>
+          </form>
+        </td>
+
+      </tr>
+
+
+
+      {% elif ordered_item.category == "Pizza" %}
+
+      {% if "Special" not in ordered_item.name %}
+
+
+      <form action="{% url 'customize_order' food=ordered_item.name %}" method="post">
+        {% csrf_token %}
+
+        <tr>
+
+          <td colspan=3>
+            <label for="qauntity">Quantity</label>
+            <input name="quantity" id="quantity" type="number" value=1 min=1 max=30>
+            <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" type="submit">Add to Cart</button> </td>
+
+        </tr>
+
+        <tr>
+
+
+          <td>
+            <h5>First Topping</h5>
+            {% for topping  in toppings %}
+            <fieldset class="topping1">
+              <input type="radio" class="{{topping.name}}" required name="topping1" value="{{topping.name}}">
+              <label for="{{topping.name}}">{{topping.name}}</label><br>
+            </fieldset>
+
+
+            {% endfor %}
+          </td>
+
+          {% if "2" in ordered_item.name or "3" in ordered_item.name %}
+
+          <td>
+            <h5>Second topping</h5>
+
+            {% for topping  in toppings %}
+            <fieldset class="topping2">
+              <input type="radio" class="{{topping.name}}" required name="topping2" value="{{topping.name}}">
+              <label for="{{topping.name}}">{{topping.name}}</label><br>
+            </fieldset>
+
+            {% endfor %}
+          </td>
+
+
+          {% endif %}
+
+          {% if "3" in ordered_item.name %}
+
+          <td>
+            <h5>Third toppings</h5>
+            {% for topping  in toppings %}
+            <fieldset class="topping3">
+              <input type="radio" class="{{topping.name}}" required name="topping3" value="{{topping.name}}">
+              <label for="{{topping.name}}">{{topping.name}}</label><br>
+            </fieldset>
+
+            {% endfor %}
+
+            {% endif %}
+
+          </td>
+      </form>
+
+      {% endif %}
+
+
+      {% if "Special" in ordered_item.name %}
+
+      <tr>
+
+        <td>
+          <h6> Choose 4 or more toppings</h6>
+          <form class="" action="{% url 'customize_order' food=ordered_item.name %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-row justify-content-center" style="padding-bottom: 5px">
+
+              <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" type="submit">Submit</button>
+            </div>
+
+            <label for="qauntity">Quantity:</label>
+            <input name="quantity" id="quantity" type="number" value=1 min=1 max=30>
+
+            {% for topping  in toppings %}
+            <div class="form-check">
+
+              <input class="form-check-input" type="checkbox" name="special_toppings" value="{{topping.name}}" id="{{topping.name}}">
+              <label class="form-check-label" for="{{topping.name}}">
+                {{topping.name}}
+              </label>
+            </div>
+            {% endfor %}
+
+          </form>
+        </td>
+
+      </tr>
+      {% endif %}
+
+      {% endif %}
+
+
+    </tbody>
+
+  </table>
+
+</div>
+{%endblock%}

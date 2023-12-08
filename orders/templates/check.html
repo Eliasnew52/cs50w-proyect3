@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+
+{% block title %} check out {% endblock %}
+
+{% block template %}
+
+<div class="container px-5 py-20 mx-auto flex flex-wrap items-center">
+    
+    <h1 class="text-2xl font-bold text-yellow-700">Confirm Order Details</h1>
+    
+    <div>
+      <table class="shadow-2xl border-2 border-cyan-200 w-full md:table-fixed content-center">
+        
+        <tr>
+          <td>
+            {% for item in order.get_cart_ordered_items %}
+        <tr>
+  
+          {%if item.menu_item.category == "Pizza" and "Topping" in item.menu_item.name %}
+          {% if item.ptoppings %}
+          <td>
+            {{item.menu_item.sizes}}
+            {{ item.menu_item.name }}
+  
+            Toppings: {{ item.ptoppings }}
+  
+  
+          </td>
+          {% endif %}
+          {% endif %}
+  
+  
+          {%if item.menu_item.category == "Pizza" and "Topping" not in item.menu_item.name %}
+          <td>
+            {{item.menu_item.sizes}}
+            {{ item.menu_item.name }}
+          </td>
+          {% endif %}
+  
+  
+  
+          <!-- subs with no extras -->
+  
+          {% if item.menu_item.category == "Subs" and item.num_extras == 0 %}
+  
+          <td>
+            {{item.menu_item.sizes}}
+  
+            {{ item.menu_item.name }}
+  
+          </td>
+  
+          {% endif %}
+  
+  
+          {% if item.num_extras > 0 %}
+          <td>
+            {{item.menu_item.sizes}}
+            {{ item.menu_item.name }}
+            Extras: {{ item.extras }}
+          </td>
+          {% endif %}
+  
+          {% if item.menu_item.category != "Pizza" and item.menu_item.category != "Subs" %}
+          <td>
+            {% if item.menu_item.sizes%}
+            {{item.menu_item.sizes}}
+            {% endif %}
+  
+            {{ item.menu_item.name }}
+          </td>
+          {% endif %}
+  
+          {% if item.num_extras > 0 %}
+          <td>{{ item.menu_item.price }}
+            + {{item.extras_cost}}</td>
+          {%else%}
+          <td>${{ item.menu_item.price }}</td>
+  
+          {%endif%}
+        </tr>
+        {% endfor %}
+  
+        <tr>
+          <td><strong>Order Total</strong> </td>
+          <td> <strong>${{ order.get_cart_total }}</strong></td>
+  
+  
+        </tr>
+  
+        <tr>
+        <td></td>
+        <td> <a href="#" class="block md:px-4 transition hover:text-yellow-700">Confirmar Compra</a>
+        </td>
+      </tr>
+      </table>
+    </div>
+  
+
+  </div>
+
+{% endblock %}
